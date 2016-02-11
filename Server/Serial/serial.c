@@ -51,7 +51,10 @@ int write_s(serial_com* sc, char *buffer, int nbyte){
 int read_s(int fd, char *buffer){
 	char* car = (char*)malloc(sizeof(char));
 	read(fd,car,1);
-	if(*car != '#') return 0;
+	if(*car != '#'){
+		free(car);
+		return 0;
+	}
 	else{
 		int cpt=0;
 		while(*car != '!'){
@@ -62,6 +65,7 @@ int read_s(int fd, char *buffer){
 		}
 		*(buffer + cpt -1) = ' ';
 	}
+	free(car);
 	return 1;
 }
 
@@ -84,8 +88,9 @@ void *thread_Serial_Read(void *arg){
 
 	tcflush(dataRead->fd, TCIFLUSH);
 
+	char* message = (char*)malloc(20 * sizeof(char));
+
 	while(!*(dataRead->close)){
-		char* message = (char*)malloc(20 * sizeof(char));
 		if(read_s(dataRead->fd, message) == 1){
 			#ifdef DEBUG
 				printf("Serial read : %s\n", message);
@@ -94,6 +99,7 @@ void *thread_Serial_Read(void *arg){
 			pthread_mutex_lock(&(dataRead->mutex));
 			*queue = enqueue(*queue, message);
 			pthread_mutex_unlock(&(dataRead->mutex));
+			message = (char*)malloc(20 * sizeof(char));
 		}
 	}
 
