@@ -1,35 +1,7 @@
 #include "Server/Serial/serial.h"
 #include "Server/Queue/queue.h"
 #include "Server/Graph/graph.h"
-
-void *thread_Exec(void *arg){
-	#ifdef DEBUG
-		printf("Start the thread exec\n" );
-	#endif
-
-	dataSerial *dataExec = arg;
-	Queue *queue = dataExec->queue;
-
-	while(!*(dataExec->close)){
-		//execution of the request on the top of the queue
-		if(*queue != NULL){
-			#ifdef DEBUG
-				printf("Execution of -> %s\n", getTop(*queue)); //Change to make to execute action
-				#endif
-				pthread_mutex_lock(&(dataExec->mutex));
-				*queue = dequeue(*queue);
-				pthread_mutex_unlock(&(dataExec->mutex));
-				//sleep(3);
-		}
-	}
-
-	#ifdef DEBUG
-		printf("Close the thread exec\n" );
-	#endif
-
-	(void) arg;
-	pthread_exit(NULL);
-}
+#include "Server/Thread/thread.h"
 
 int main(int argc, char *argv[]){
 
@@ -47,10 +19,10 @@ int main(int argc, char *argv[]){
 	int show = 0;
 	int empty = 0;
 
-	dataSerial* dataRead = (dataSerial*)malloc(sizeof(*dataRead));
-	dataRead->queue = &queueRead;
-	dataRead->fd = serial.fd;
-	dataRead->close = &stop;
+	dataThread* data = (dataThread*)malloc(sizeof(*data));
+	data->queueRead = &queueRead;
+	data->fd = serial.fd;
+	data->close = &stop;
 
 	pthread_t threadRead;
 	pthread_t threadExec;
@@ -59,13 +31,13 @@ int main(int argc, char *argv[]){
 		printf("Création of lecture thread\n" );
 	#endif
 
-	pthread_create(&threadRead, NULL, thread_Serial_Read, dataRead);
+	pthread_create(&threadRead, NULL, thread_Serial_Read, data);
 
 	#ifdef DEBUG
 		printf("Création of execution thread\n" );
 	#endif
 
-	pthread_create(&threadExec, NULL, thread_Exec, dataRead);
+	pthread_create(&threadExec, NULL, thread_Exec, data);
 
 	char* standardInput = (char*) malloc(4*sizeof(char));
 

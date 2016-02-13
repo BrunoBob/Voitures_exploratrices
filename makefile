@@ -1,6 +1,6 @@
 NAME = $(target)
 OPT = -Wall -pthread
-DIR = /home/utilisateur/Bureau/Voiture_autonome/Bin
+DIR = /home/utilisateur/Bureau/Voitures_exploratrices/Bin
 WAY = $(path)
 CC = gcc
 
@@ -34,4 +34,4 @@ server : binaryAll main.o
 	$(CC) $(OPT) main.o Bin/*.o -o server
 
 clean :
-	rm Bin/*.o server main.o
+	rm Bin/*.o server main.o *~
