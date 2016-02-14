@@ -2,6 +2,7 @@
 #define SERIAL
 
 #include "../library.h"
+#include "../Protocol/protocol.h"
 
 typedef struct {
 	char name[20];

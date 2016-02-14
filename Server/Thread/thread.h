@@ -2,6 +2,9 @@
 #define THREAD
 
 #include "../library.h"
+#include "../Queue/queue.h"
+#include "../Protocol/protocol.h"
+#include "../Serial/serial.h"
 
 typedef struct {
 	Queue* queueRead;

@@ -11,8 +11,5 @@
 #include <sys/types.h>
 #include <stdint.h>
 
-#include "Queue/queue.h"
-#include "Serial/serial.h"
-#include "Protocol/protocol.h"
 
 #endif

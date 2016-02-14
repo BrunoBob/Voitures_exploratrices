@@ -3,9 +3,9 @@
 
 #include "../library.h"
 
-typedef struct cell{
+typedef struct queueCell{
 	uint8_t* request;
-	struct cell* next;
+	struct queueCell* next;
 }*Queue;
 
 Queue createQueue();

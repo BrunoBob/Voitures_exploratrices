@@ -1,28 +1,13 @@
 #include "graph.h"
 
-Node createNode(int index){
-	Node node;
-	node = (Node)malloc(sizeof(*node));
-	node->index = index;
-	return node;
+Graph createGraph(){
+	Graph graph = NULL;
+	graph = (Graph) malloc(sizeof(*graph));
+	graph->link = (uint8_t*) malloc(4 * sizeof(uint8_t));
+	return graph;
 }
 
-
-Link createLink(int angle){
-	Link link;
-	link = (Link)malloc(sizeof(*link));
-	link->angle = angle;
-	return link;
-}
-
-
-void printGraph(Node graph){
-	while(graph != NULL){
-		printf("Sommet : %d", graph->index);
-		Link link = graph->firstLink;
-		while(link != NULL){
-			printf(" -> %d : angle = %d", link->linked->index, link->angle);
-		}
-		printf("\n");
-	}
+void removeGraph(Graph graph){
+	free(graph->link);
+	free(graph);
 }

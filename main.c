@@ -1,7 +1,7 @@
-#include "Server/Serial/serial.h"
-#include "Server/Queue/queue.h"
+#include "Server/library.h"
 #include "Server/Graph/graph.h"
 #include "Server/Thread/thread.h"
+#include "Server/Queue/queue.h"
 
 int main(int argc, char *argv[]){
 

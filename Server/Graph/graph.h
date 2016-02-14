@@ -3,22 +3,14 @@
 
 #include "../library.h"
 
-typedef struct node1{
+typedef struct node{
+	uint8_t* link;
+	uint8_t index;
 	struct node* next;
-	struct node2* linked;
-	int angle, value;
-}*Link;
+} *Graph;
 
-typedef struct node2{
-	struct node2 *next;
-	Link firstLink;
-	int index;
-}*Node;
+Graph createGraph();
 
-Node createNode(int index);
-
-Link createLink(int angle);
-
-void printGraph(Node graph);
+void removeGraph(Graph graph);
 
 #endif
