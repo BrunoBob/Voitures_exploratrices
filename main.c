@@ -28,6 +28,11 @@ int main(int argc, char *argv[]){
 
 	pthread_t threadRead;
 	pthread_t threadExec;
+	pthread_t threadWrite;
+
+	uint8_t test[4] = {0,5,6,2};
+
+	queueWrite = enqueue(queueWrite, test);
 
 	#ifdef DEBUG
 		printf("Création of reading thread\n" );
@@ -40,6 +45,12 @@ int main(int argc, char *argv[]){
 	#endif
 
 	pthread_create(&threadExec, NULL, thread_Exec, data);
+
+	#ifdef DEBUG
+		printf("Création of writing thread\n" );
+	#endif
+
+	pthread_create(&threadWrite, NULL, thread_Serial_Write, data);
 
 	char* standardInput = (char*) malloc(4*sizeof(char));
 
@@ -66,7 +77,10 @@ int main(int argc, char *argv[]){
 				empty = ((strcmp(standardInput, "empt") == 0));
 		}
 		if(show){
+			printf("Read = \n");
 			printQueue(queueRead);
+			printf("Write = \n");
+			printQueue(queueWrite);
 			show = 0;
 		}
 		if(empty){
@@ -78,10 +92,12 @@ int main(int argc, char *argv[]){
 
 	pthread_join(threadRead, NULL);
 	pthread_join(threadExec, NULL);
+	pthread_join(threadWrite, NULL);
 
 	close_s(&serial) ;
 
 	queueRead = emptyQueue(queueRead);
+	queueWrite = emptyQueue(queueWrite);
 
 	#ifdef DEBUG
 		printf("End Server !!!\n");

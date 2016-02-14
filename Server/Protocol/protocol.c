@@ -9,15 +9,16 @@ uint8_t* getConfirmation(uint8_t* message){
 	return confirmation;
 }
 
-void printMessage(uint8_t* message){
-	int i;
-	for(i = 0 ; i < MESSAGE_LENGHT ; i++){
-		printf("%d", *(message+i));
+int isConfirmation(uint8_t* messageWrite, uint8_t* messageRead){
+	int value = 0;
+	if(messageRead != NULL){
+		value= ((*(messageWrite) == *(messageRead+1)) && (*(messageWrite+1) == *(messageRead)) &&  (*(messageWrite+2) + 128 == *(messageRead+2)) && (*(messageWrite+3) == *(messageRead+3)));
 	}
+	return value;
 }
 
-char* byteToStr(uint8_t* message){
-	char* str = (char*)malloc(3*MESSAGE_LENGHT);
-	sprintf(str,"%d%d%d%d", (int)*(message), (int)*(message+1), (int)*(message+2), (int)*(message+3));
-	return str;
+void printMessage(char* info, uint8_t* message){
+	char str[15];
+	sprintf(str,"%d.%d.%d.%d", (int)*(message), (int)*(message+1), (int)*(message+2), (int)*(message+3));
+	printf("%s%s\n", info, str);
 }

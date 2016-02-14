@@ -15,7 +15,7 @@ int open_s(serial_com* sc, char *name);
 
 int read_s(int fd, uint8_t *buffer);
 
-int write_s(serial_com* sc, uint8_t *buffer, int nbyte);
+int write_s(int fd, uint8_t *buffer, int nbyte);
 
 int close_s(serial_com* sc);
 

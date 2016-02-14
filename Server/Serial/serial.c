@@ -44,8 +44,12 @@ int open_s(serial_com* sc, char *name){
 	return 1;
 }
 
-int write_s(serial_com* sc, uint8_t *buffer, int nbyte){
-	return write(sc->fd, buffer, nbyte);
+int write_s(int fd, uint8_t *buffer, int nbyte){
+	int val=0;
+	val+= write(fd, "#", 1);
+	val+= write(fd, buffer, nbyte);
+	val+= write(fd, "!", 1);
+	return val;
 }
 
 int read_s(int fd, uint8_t *buffer){

@@ -18,9 +18,7 @@ void *thread_Serial_Read(void *arg){
 	while(!*(dataRead->close)){
 		if(read_s(dataRead->fd, message) == 1){
 			#ifdef DEBUG
-				char* mess = byteToStr(message);
-				printf("Serial read : %s\n", mess);
-				free(mess);
+				printMessage("Serial read : ", message);
 			#endif
 
 			pthread_mutex_lock(&(dataRead->mutexRead));
@@ -30,11 +28,7 @@ void *thread_Serial_Read(void *arg){
 			if(*(message+2) < 128){
 				uint8_t* confirmation = getConfirmation(message);
 				#ifdef DEBUG
-					char* mess = byteToStr(message);
-					char* conf = byteToStr(confirmation);
-					printf("Confirmation of %s = %s\n", mess, conf);
-					free(mess);
-					free(conf);
+					printMessage("Create confirmation == ", confirmation);
 				#endif
 				pthread_mutex_lock(&(dataRead->mutexWrite));
 				*queueWrite = enqueue(*queueWrite, confirmation); //Add the message of confirmation in the writing queue
@@ -59,17 +53,17 @@ void *thread_Exec(void *arg){
 	#endif
 
 	dataThread *dataExec = arg;
+
 	Queue *queueRead = dataExec->queueRead;
+	//Queue *queueWrite = dataExec->queueWrite;
 
 	while(!*(dataExec->close)){
 		//execution of the request on the top of the queue
-		if(*queueRead != NULL){
+		if(*queueRead != NULL && (*(getTop(*queueRead) + 2) < 128)){
 			#ifdef DEBUG
-				char* mess = byteToStr(getTop(*queueRead));
-				printf("Execution of -> %s\n", mess); //Change to make to execute action
-				free(mess);
+				printMessage("Execution of -> ", getTop(*queueRead));
 			#endif
-				pthread_mutex_lock(&(dataExec->mutexRead));
+			pthread_mutex_lock(&(dataExec->mutexRead));
 			*queueRead = dequeue(*queueRead);
 			pthread_mutex_unlock(&(dataExec->mutexRead));
 		}
@@ -83,33 +77,46 @@ void *thread_Exec(void *arg){
 	pthread_exit(NULL);
 }
 
-/*void *thread_Serial_Write(void *arg){
+void *thread_Serial_Write(void *arg){
 
+	sleep(2);
 	#ifdef DEBUG
 		printf("Start the thread write\n" );
 	#endif
 
-	dataSerial *dataWrite = arg;
 
-	Queue *queue = dataWrite->queue;
+	dataThread *dataWrite = arg;
 
-	tcflush(dataRead->fd, TCIFLUSH);
+	Queue *queueRead = dataWrite->queueRead;
+	Queue *queueWrite = dataWrite->queueWrite;
+
+	uint8_t* message = NULL;
 
 	while(!*(dataWrite->close)){
-		if(queue != NULL){
-			write_s
-		}
+		if(*queueWrite != NULL){
+			message = getTop(*queueWrite);
+			#ifdef DEBUG
+				printMessage("writing message >> ", message);
+			#endif
+			write_s(dataWrite->fd, message, MESSAGE_LENGHT);
 
-			pthread_mutex_lock(&(dataRead->mutex));
-			*queue = enqueue(*queue, message);
-			pthread_mutex_unlock(&(dataRead->mutex));
+			pthread_mutex_lock(&(dataWrite->mutexWrite));
+			*queueWrite = dequeue(*queueWrite);
+			pthread_mutex_unlock(&(dataWrite->mutexWrite));
+
+			if(*(message+2) < 128){
+				while(!isConfirmation(message,getTop(*queueRead)) && !*(dataWrite->close) && *queueRead != NULL);
+				pthread_mutex_lock(&(dataWrite->mutexRead));
+				*queueRead = dequeue(*queueRead);
+				pthread_mutex_unlock(&(dataWrite->mutexRead));
+			}
 		}
 	}
 
 	#ifdef DEBUG
-		printf("Close the thread read\n" );
+		printf("Close the thread write\n" );
 	#endif
 
 	(void) arg;
 	pthread_exit(NULL);
-}*/
+}

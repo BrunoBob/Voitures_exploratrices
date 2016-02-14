@@ -7,8 +7,8 @@
 
 uint8_t* getConfirmation(uint8_t* message);
 
-void printMessage(uint8_t* message);
+int isConfirmation(uint8_t* messageWrite, uint8_t* messageRead);
 
-char* byteToStr(uint8_t* message);
+void printMessage(char* info, uint8_t* message);
 
 #endif
