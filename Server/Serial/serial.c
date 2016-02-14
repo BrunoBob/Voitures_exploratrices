@@ -44,12 +44,12 @@ int open_s(serial_com* sc, char *name){
 	return 1;
 }
 
-int write_s(serial_com* sc, char *buffer, int nbyte){
+int write_s(serial_com* sc, uint8_t *buffer, int nbyte){
 	return write(sc->fd, buffer, nbyte);
 }
 
-int read_s(int fd, char *buffer){
-	char* car = (char*)malloc(sizeof(char));
+int read_s(int fd, uint8_t *buffer){
+	uint8_t* car = (uint8_t*)malloc(1);
 	read(fd,car,1);
 	if(*car != '#'){
 		free(car);
@@ -57,13 +57,14 @@ int read_s(int fd, char *buffer){
 	}
 	else{
 		int cpt=0;
-		while(*car != '!'){
+		while(*car != '!' && cpt < MESSAGE_LENGHT){
 			if(read(fd, car, 1) == 1){
 				*(buffer + cpt) = *car;
+
 				cpt++;
 			}
 		}
-		*(buffer + cpt -1) = ' ';
+		//*(buffer + cpt -1) = ' ';
 	}
 	free(car);
 	return 1;

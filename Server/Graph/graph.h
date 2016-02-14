@@ -1,8 +1,7 @@
 #ifndef GRAPH
 #define GRAPH
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "../library.h"
 
 typedef struct node1{
 	struct node* next;

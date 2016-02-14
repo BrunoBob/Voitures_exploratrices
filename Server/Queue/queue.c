@@ -6,7 +6,7 @@ Queue createQueue(){
 	return Q;
 }
 
-Queue enqueue(Queue Q, char* request){
+Queue enqueue(Queue Q, uint8_t* request){
 	if(Q == NULL){
 		Q = createQueue();
 		Q->request = request;
@@ -50,7 +50,7 @@ void printQueue(Queue Q){
 	printf("Fin liste\n");
 }
 
-char* getTop(Queue Q){
+uint8_t* getTop(Queue Q){
 	if(Q != NULL){
 		return Q->request;
 	}

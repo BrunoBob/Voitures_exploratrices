@@ -1,13 +1,7 @@
 #ifndef THREAD
 #define THREAD
 
-#include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <termios.h>
-#include <unistd.h>
-#include "../Queue/queue.h"
-#include "../Serial/serial.h"
+#include "../library.h"
 
 typedef struct {
 	Queue* queueRead;

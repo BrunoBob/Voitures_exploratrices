@@ -14,6 +14,7 @@ int main(int argc, char *argv[]){
 	open_s(&serial, "/dev/ttyACM0") ;
 
 	Queue queueRead = NULL;
+	Queue queueWrite = NULL;
 
 	int stop = 0;
 	int show = 0;
@@ -21,6 +22,7 @@ int main(int argc, char *argv[]){
 
 	dataThread* data = (dataThread*)malloc(sizeof(*data));
 	data->queueRead = &queueRead;
+	data->queueWrite = &queueWrite;
 	data->fd = serial.fd;
 	data->close = &stop;
 
@@ -28,7 +30,7 @@ int main(int argc, char *argv[]){
 	pthread_t threadExec;
 
 	#ifdef DEBUG
-		printf("Création of lecture thread\n" );
+		printf("Création of reading thread\n" );
 	#endif
 
 	pthread_create(&threadRead, NULL, thread_Serial_Read, data);
