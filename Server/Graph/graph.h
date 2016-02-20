@@ -4,8 +4,8 @@
 #include "../library.h"
 
 typedef struct node{
-	uint8_t* link;
-	uint8_t index;
+	uint8_t* time;
+	uint8_t numNode;
 	struct node* next;
 } *Graph;
 
