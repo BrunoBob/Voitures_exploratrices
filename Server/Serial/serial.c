@@ -13,13 +13,16 @@ int open_s(serial_com* sc, char *name){
 		printf("Open file : %s\n", sc->name) ;
 	#endif
 
-	sc->fd = open(sc->name, O_RDWR) ;
+	if((sc->fd = open(sc->name, O_RDWR))== -1){
+		printf("Error opening %s\n", sc->name);
+		exit(0);
+	}
 
 	#ifdef DEBUG
 		printf("wait\n") ;
 	#endif
 
-	usleep(3000) ;
+	usleep(300000) ;
 
 
 	tcgetattr(sc->fd, &toptions) ;
@@ -35,7 +38,7 @@ int open_s(serial_com* sc, char *name){
 
 	tcsetattr(sc->fd, TCSANOW, &toptions) ;
 
-	usleep(300000);
+	usleep(30000);
 
 	#ifdef DEBUG
 		printf("Serial port open\n") ;
@@ -54,6 +57,10 @@ int write_s(int fd, uint8_t *buffer, int nbyte){
 
 int read_s(int fd, uint8_t *buffer){
 	uint8_t* car = (uint8_t*)malloc(1);
+	if(read(fd,car,0) == -1){
+		printf("Erreur reading file");
+		return 0;
+	}
 	read(fd,car,1);
 	if(*car != '#'){
 		free(car);
@@ -64,7 +71,6 @@ int read_s(int fd, uint8_t *buffer){
 		while(*car != '!' && cpt < MESSAGE_LENGHT){
 			if(read(fd, car, 1) == 1){
 				*(buffer + cpt) = *car;
-
 				cpt++;
 			}
 		}

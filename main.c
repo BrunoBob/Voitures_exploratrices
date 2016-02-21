@@ -30,10 +30,6 @@ int main(int argc, char *argv[]){
 	pthread_t threadExec;
 	pthread_t threadWrite;
 
-	uint8_t test[4] = {0,5,6,2};
-
-	queueWrite = enqueue(queueWrite, test);
-
 	#ifdef DEBUG
 		printf("Création of reading thread\n" );
 	#endif
