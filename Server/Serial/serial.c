@@ -61,8 +61,8 @@ int read_s(int fd, uint8_t *buffer){
 		printf("Erreur reading file");
 		return 0;
 	}
-	read(fd,car,1);
 	if(*car != '#'){
+		read(fd,car,1);
 		free(car);
 		return 0;
 	}
