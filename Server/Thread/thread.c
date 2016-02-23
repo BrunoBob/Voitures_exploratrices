@@ -79,7 +79,7 @@ void *thread_Exec(void *arg){
 
 void *thread_Serial_Write(void *arg){
 
-	sleep(2);
+	//sleep(2);
 	#ifdef DEBUG
 		printf("Start the thread write\n" );
 	#endif

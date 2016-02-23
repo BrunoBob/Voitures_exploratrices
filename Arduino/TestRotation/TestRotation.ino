@@ -54,7 +54,7 @@ void setup() {
   /*Setup for the 90 degres*/
   degres[0] = getCompass();
   Serial.print("Angle [0] = ");
-  Serial.println(degres[0].value.z);
+  Serial.println(degres[0].value.y);
   int i = 0;
   for(i=1;i<=3;i++){
     servoLeft.write(65);
@@ -64,7 +64,7 @@ void setup() {
     servoRight.write(95);
     degres[i] = getCompass();
     Serial.print("Angle [");Serial.print(i);Serial.print("] = ");
-    Serial.println(degres[i].value.z);
+    Serial.println(degres[i].value.y);
     delay(1000);
   }
  Serial.println("Fin du setup");
@@ -78,7 +78,7 @@ void loop() {
     Compass currentDegre;
     currentDegre.value.z = 0;
     delay(200);
-     while((currentDegre.value.z <= (degres[2].value.z - TOLERANCE)) || (currentDegre.value.z >= (degres[2].value.z + TOLERANCE))){
+     while((currentDegre.value.y <= (degres[2].value.y - TOLERANCE)) || (currentDegre.value.y >= (degres[2].value.y + TOLERANCE))){
       currentDegre = getCompass();
       servoLeft.write(65);
       servoRight.write(65);
@@ -87,12 +87,12 @@ void loop() {
       servoRight.write(95);
       delay(100);
       
-      Serial.print("Valeur de l'angle sur Z : ");
-      Serial.println(currentDegre.value.z);
+      Serial.print("Valeur de l'angle sur Y : ");
+      Serial.println(currentDegre.value.y);
       Serial.print("Angle [2] = ");
-      Serial.println(degres[2].value.z);
-      Serial.print("(currentDegre.value.z <= (degres[2].value.z - TOLERANCE)) || (currentDegre.value.z >= (degres[2].value.z + TOLERANCE)) = ");
-      Serial.println((currentDegre.value.z <= (degres[2].value.z - TOLERANCE)) || (currentDegre.value.z >= (degres[2].value.z + TOLERANCE)));
+      Serial.println(degres[2].value.y);
+      Serial.print("(currentDegre.value.y <= (degres[2].value.y - TOLERANCE)) || (currentDegre.value.y >= (degres[2].value.y + TOLERANCE)) = ");
+      Serial.println((currentDegre.value.y <= (degres[2].value.y - TOLERANCE)) || (currentDegre.value.y >= (degres[2].value.y + TOLERANCE)));
     }
  
      Serial.print("Fin d'une boucle :\n");
