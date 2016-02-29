@@ -1,4 +1,4 @@
-#include <Servo.h>
+  #include <Servo.h>
 #include <Wire.h> //I2C Arduino Library
 #include <HMC5883L_Simple.h>
 
@@ -36,9 +36,9 @@ void setup() {
   Serial.println(degres[0]);
   int i = 0;
   for(i=1;i<=3;i++){
-    servoLeft.write(65);
-    servoRight.write(65);
-    delay(1000);   
+    servoLeft.write(93);
+    servoRight.write(93);
+    delay(5000);   
     servoLeft.write(95);
     servoRight.write(95);
     degres[i] = Compass.GetHeadingDegrees();
@@ -59,8 +59,8 @@ void loop() {
     delay(200);
      while((currentDegre <= (degres[2] - TOLERANCE)) || (currentDegre >= (degres[2] + TOLERANCE))){
       currentDegre = Compass.GetHeadingDegrees();
-      servoLeft.write(65);
-      servoRight.write(65);
+      servoLeft.write(93);
+      servoRight.write(93);
       delay(300);
       servoLeft.write(95);
       servoRight.write(95);
@@ -71,7 +71,7 @@ void loop() {
       Serial.print("Angle [2] = ");
       Serial.println(degres[2]);
       Serial.print("(currentDegre <= (degres[2] - TOLERANCE)) || (currentDegre >= (degres[2] + TOLERANCE)) = ");
-      Serial.println((currentDegre <= (degres[2] - TOLERANCE)) || (currentDegre >= (degres[2] + TOLERANCE)));
+      Serial.println((currentDegre <= (degres[1] - TOLERANCE)) || (currentDegre >= (degres[1] + TOLERANCE)));
     }
  
      Serial.print("Fin d'une boucle :\n");
