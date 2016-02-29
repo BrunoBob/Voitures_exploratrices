@@ -55,21 +55,9 @@ void loop() {
     
   }
   /*
-   * if flag = 3 datas are receives
+   * Go on non exploration mode
    */
   if(flag == 3){
-    //TODO
-  }
-  /*
-   * if flag = 4 datas are send to server
-   */
-  if(flag == 4){
-    
-  }
-  /*
-   * Treat datas receive thanks to server
-   */
-  if(flag == 5){
     
   }
 
