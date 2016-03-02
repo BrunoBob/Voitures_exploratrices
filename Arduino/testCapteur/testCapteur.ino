@@ -1,6 +1,6 @@
 /* Code test, fais avancer le robot, détécter les intersections, tourner
    Version 0.2
-   Auteur : Bruno TESSIER Paul VALENTIN
+   Auteur : Bruno TESSIER & Paul VALENTIN
 */
 #include <Servo.h>
 #include <Wire.h>
@@ -81,7 +81,7 @@ void setup() {
     digitalWrite(led, HIGH);
     /*servoLeft.write(93);
       servoRight.write(93);*/
-    delay(4000); //bad delay, better to setup manually
+    delay(4000); //bad delay, better setup manually
     digitalWrite(led, LOW);
     /*servoLeft.write(95);
       servoRight.write(95);*/
@@ -115,7 +115,8 @@ void loop() {
   mmFreeSpace = mmLeft + mmRight;
 
   /*When he can go forward*/
-  /*TODO
+  /*
+     TODO
      Check left and right side if we detect intersection
   */
   byte rightSpeed = 95;
@@ -129,14 +130,14 @@ void loop() {
       rightSpeed += 2;
     if (leftSpeed >= 65)
       leftSpeed -= 2;
-    /*Check if robot is not too close to the wall*/
+    /*Check if robot is not too close of a wall*/
     if (mmFreeSpace - mmLeft >= mmFreeSpace - SPTOL && leftSpeed <= 95) {
-      Serial.println("Robot go to the right");
+      Serial.println("Robot go to the left");
       leftSpeed--;
       rightSpeed++;
     }
     if (mmFreeSpace - mmRight >= mmFreeSpace - SPTOL && rightSpeed >= 95) {
-      Serial.println("Robot go to the left");
+      Serial.println("Robot go to the right");
       rightSpeed--;
       leftSpeed++;
     }
@@ -239,8 +240,11 @@ double readSensor(byte trigger, byte echo) {
   return distance ;
 }
 
+/*Function permit to turn the robot to a certain angle*/
 void turn() {
   while ((currentDegre <= (degres[currentAngle] - TOLERANCE)) || (currentDegre >= (degres[currentAngle] + TOLERANCE))) {
+    Serial.print("\ncurrent degre : ");Serial.println(currentDegre);
+    Serial.print("goal : ");Serial.println(degres[currentAngle]);
     currentDegre = Compass.GetHeadingDegrees();
     servoLeft.write(93);
     servoRight.write(93);
