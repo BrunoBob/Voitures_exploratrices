@@ -7,13 +7,13 @@
 #include <HMC5883L_Simple.h>
 
 /*Tolerance for Compass*/
-#define TOLERANCE 10
+#define TOLERANCE 2
 
 /*
    Space tolerance for ultrasonic sensor, if space between robot and wall
    is lessier than SPTOL, robot move off the wall
 */
-#define SPTOL 20
+#define SPTOL 100
 
 HMC5883L_Simple Compass;
 
@@ -61,7 +61,8 @@ void setup() {
   pinMode(RIGHT_E, INPUT);
 
   pinMode(led, OUTPUT);
-
+  digitalWrite(led, LOW);
+  delay(10);
   Wire.begin();
 
   Compass.SetDeclination(0, 14, 'E');
@@ -74,12 +75,11 @@ void setup() {
   Serial.print("Angle [0] = ");
   Serial.println(degres[0]);
   for (uint8_t i = 1; i <= 3; i++) {
-    digitalWrite(led, HIGH);
-
-    delay(4000); //bad delay, better setup manually
     digitalWrite(led, LOW);
-
+    delay(4000); //bad delay, better setup manually
     degres[i] = Compass.GetHeadingDegrees();
+    digitalWrite(led, HIGH);
+    delay(100);
     Serial.print("Angle ["); Serial.print(i); Serial.print("] = ");
     Serial.println(degres[i]);
     delay(1000);
@@ -87,7 +87,6 @@ void setup() {
  // Serial.println("Fin du setup");
   servoRight.attach(13);
   servoLeft.attach(12);
-  delay(3000);
 }
 
 /*
@@ -103,14 +102,8 @@ void loop() {
   double mmLeft = 0;
   double mmRight = 0;
   double mmFreeSpace;
-
+  
   currentDegre = 0;
-
-  mmCenter = getDistance(0);
-  mmLeft = getDistance(1);
-  mmRight = getDistance(2);
-  mmFreeSpace = mmLeft + mmRight;
-
   /*When he can go forward*/
   /*
      TODO
@@ -120,31 +113,37 @@ void loop() {
   byte leftSpeed = 95;
 
     digitalWrite(led, HIGH);
+    delay(10);
   /*While he doesn't detect any intersection*/
   while ((mmCenter >= 50 || mmCenter == 0) && mmRight <= 400 && mmLeft <= 400) {
     /*if the robot can go faster*/
-    if (rightSpeed <= 124)
+    if (rightSpeed < 110)
       rightSpeed += 2;
-    if (leftSpeed >= 65)
+    if (leftSpeed > 80)
       leftSpeed -= 2;
     /*Check if robot is not too close of a wall*/
     if (mmFreeSpace - mmLeft >= mmFreeSpace - SPTOL && leftSpeed <= 95) {
       //Serial.println("Robot go to the left");
-      leftSpeed--;
-      rightSpeed++;
+      digitalWrite(led, LOW);
+      leftSpeed += 4;
+      rightSpeed += 4;
     }
     if (mmFreeSpace - mmRight >= mmFreeSpace - SPTOL && rightSpeed >= 95) {
       //Serial.println("Robot go to the right");
-      rightSpeed--;
-      leftSpeed++;
+      digitalWrite(led, LOW);
+      delay(10);
+      digitalWrite(led, LOW);
+      leftSpeed -= 4;
+      rightSpeed -= 4;
     }
+    digitalWrite(led, HIGH);
 
     servoLeft.write(leftSpeed);
     servoRight.write(rightSpeed);
-    /*Serial.println("[SPEED]");
+    Serial.println("[SPEED]");
     Serial.print("leftSpeed = "); Serial.println(leftSpeed);
     Serial.print("rightSpeed = "); Serial.println(rightSpeed);
-    Serial.println("[/SPEED]");*/
+    Serial.println("[/SPEED]");
     delay(500);
     mmCenter = getDistance(0);
     mmLeft = getDistance(1);
@@ -163,7 +162,8 @@ void loop() {
     Serial.println("[/MEASURE]\n");
   }
   digitalWrite(led, LOW);
-  //Serial.println("[STOP] Robot stop to go forward [/STOP]");
+  delay(10);
+  Serial.println("[STOP] Robot stop to go forward [/STOP]");
   servoLeft.write(95);
   servoRight.write(95);
   /*
@@ -254,4 +254,11 @@ void turn() {
     servoRight.write(95);
     delay(100);
   }
+
+  servoLeft.write(65);
+  servoRight.write(124);
+  delay(3000);
+  servoLeft.write(95);
+  servoRight.write(95);
+  delay(100);
 }
