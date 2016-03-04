@@ -122,19 +122,19 @@ void loop() {
     if (leftSpeed > 80)
       leftSpeed -= 2;
     /*Check if robot is not too close of a wall*/
-    if (mmFreeSpace - mmLeft >= mmFreeSpace - SPTOL && leftSpeed <= 95) {
+    if ((mmRight >= mmFreeSpace - SPTOL) && leftSpeed <= 95 && rightSpeed <= 106) {
       //Serial.println("Robot go to the left");
       digitalWrite(led, LOW);
-      leftSpeed += 4;
-      rightSpeed += 4;
+      leftSpeed += 2;
+      rightSpeed += 2;
     }
-    if (mmFreeSpace - mmRight >= mmFreeSpace - SPTOL && rightSpeed >= 95) {
-      //Serial.println("Robot go to the right");
+    if ((mmLeft >= mmFreeSpace - SPTOL) && rightSpeed >= 95 && leftSpeed >= 84) {
+      Serial.println("Robot go to the right");
       digitalWrite(led, LOW);
       delay(10);
       digitalWrite(led, LOW);
-      leftSpeed -= 4;
-      rightSpeed -= 4;
+      leftSpeed -= 2;
+      rightSpeed -= 2;
     }
     digitalWrite(led, HIGH);
 
