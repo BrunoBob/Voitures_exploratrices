@@ -51,9 +51,6 @@ const byte led = 8;
 void setup() {
   Serial.begin(9600);
 
-  servoRight.attach(13);
-  servoLeft.attach(12);
-
   pinMode(CENTER_T, OUTPUT);
   pinMode(CENTER_E, INPUT);
 
@@ -76,22 +73,21 @@ void setup() {
   degres[0] = Compass.GetHeadingDegrees();
   Serial.print("Angle [0] = ");
   Serial.println(degres[0]);
-  uint8_t i = 0;
-  for (i = 1; i <= 3; i++) {
+  for (uint8_t i = 1; i <= 3; i++) {
     digitalWrite(led, HIGH);
-    /*servoLeft.write(93);
-      servoRight.write(93);*/
+
     delay(4000); //bad delay, better setup manually
     digitalWrite(led, LOW);
-    /*servoLeft.write(95);
-      servoRight.write(95);*/
+
     degres[i] = Compass.GetHeadingDegrees();
     Serial.print("Angle ["); Serial.print(i); Serial.print("] = ");
     Serial.println(degres[i]);
     delay(1000);
   }
-  Serial.println("Fin du setup");
-  delay(1000);
+ // Serial.println("Fin du setup");
+  servoRight.attach(13);
+  servoLeft.attach(12);
+  delay(3000);
 }
 
 /*
@@ -100,6 +96,7 @@ void setup() {
 
    Led is HIGH when robot go forward
 */
+  
 void loop() {
   /*The distance between robot and obstacle*/
   double mmCenter = 0;
@@ -122,9 +119,9 @@ void loop() {
   byte rightSpeed = 95;
   byte leftSpeed = 95;
 
+    digitalWrite(led, HIGH);
   /*While he doesn't detect any intersection*/
   while ((mmCenter >= 50 || mmCenter == 0) && mmRight <= 400 && mmLeft <= 400) {
-    digitalWrite(led, HIGH);
     /*if the robot can go faster*/
     if (rightSpeed <= 124)
       rightSpeed += 2;
@@ -132,22 +129,22 @@ void loop() {
       leftSpeed -= 2;
     /*Check if robot is not too close of a wall*/
     if (mmFreeSpace - mmLeft >= mmFreeSpace - SPTOL && leftSpeed <= 95) {
-      Serial.println("Robot go to the left");
+      //Serial.println("Robot go to the left");
       leftSpeed--;
       rightSpeed++;
     }
     if (mmFreeSpace - mmRight >= mmFreeSpace - SPTOL && rightSpeed >= 95) {
-      Serial.println("Robot go to the right");
+      //Serial.println("Robot go to the right");
       rightSpeed--;
       leftSpeed++;
     }
 
     servoLeft.write(leftSpeed);
     servoRight.write(rightSpeed);
-    Serial.println("[SPEED]");
+    /*Serial.println("[SPEED]");
     Serial.print("leftSpeed = "); Serial.println(leftSpeed);
     Serial.print("rightSpeed = "); Serial.println(rightSpeed);
-    Serial.println("[/SPEED]");
+    Serial.println("[/SPEED]");*/
     delay(500);
     mmCenter = getDistance(0);
     mmLeft = getDistance(1);
@@ -166,7 +163,7 @@ void loop() {
     Serial.println("[/MEASURE]\n");
   }
   digitalWrite(led, LOW);
-  Serial.println("[STOP] Robot stop to go forward [/STOP]");
+  //Serial.println("[STOP] Robot stop to go forward [/STOP]");
   servoLeft.write(95);
   servoRight.write(95);
   /*
@@ -176,16 +173,6 @@ void loop() {
   if (mmRight >= 400) {
     Serial.println("[ROTATE]Robot begin to rotate counterclockewise[/ROTATE]");
     /*if we go at our left, and during the setup robot rotate counterclockerwise */
-    if (currentAngle < 3) {
-      currentAngle++;
-    } else {
-      currentAngle = 0;
-    }
-    turn();
-  }
-  else if (mmLeft >= 400) {
-    Serial.println("[ROTATE]Robot begin to rotate clockewise[/ROTATE]");
-    /*if we go at our right, and during the setup robot rotate counterclockerwise */
     if (currentAngle > 0) {
       currentAngle--;
     } else {
@@ -193,16 +180,30 @@ void loop() {
     }
     turn();
   }
+  else if (mmLeft >= 400) {
+    Serial.println("[ROTATE]Robot begin to rotate clockewise[/ROTATE]");
+    /*if we go at our right, and during the setup robot rotate counterclockerwise */
+    if (currentAngle < 3) {
+      currentAngle++;
+    } else {
+      currentAngle = 0;
+    }
+    turn();
+  }
   else {
     Serial.println("[ROTATE]Robot begin to turn back[/ROTATE]");
-    if (currentAngle >= 2) {
+    if (currentAngle < 2) {
       currentAngle += 2;
     } else {
       currentAngle -= 2;
     }
     turn();
   }
-
+/*
+  mmLeft = 0;
+  mmCenter = 4000;
+  mmRight = 0;
+*/
 }
 
 /*
