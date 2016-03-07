@@ -43,7 +43,7 @@ float degres[4];
 byte currentAngle = 0; //First angle is set to 0
 float currentDegre;
 
-const byte led = 8;
+const byte led = 10;
 
 /*
    When the led is HIGH, you can turn the robot manually to another angle
@@ -122,14 +122,14 @@ void loop() {
     if (leftSpeed > 80)
       leftSpeed -= 2;
     /*Check if robot is not too close of a wall*/
-    if ((mmRight >= mmFreeSpace - SPTOL) && leftSpeed <= 95 && rightSpeed <= 106) {
+    if (((mmRight >= mmFreeSpace - SPTOL) && leftSpeed <= 95 && rightSpeed <= 106) && mmRight != 0 && mmLeft != 0) {
       //Serial.println("Robot go to the left");
       digitalWrite(led, LOW);
       leftSpeed += 2;
       rightSpeed += 2;
     }
-    if ((mmLeft >= mmFreeSpace - SPTOL) && rightSpeed >= 95 && leftSpeed >= 84) {
-      Serial.println("Robot go to the right");
+    if (((mmLeft >= mmFreeSpace - SPTOL) && rightSpeed >= 95 && leftSpeed >= 84) && mmRight != 0 && mmLeft != 0){
+      //Serial.println("Robot go to the right");
       digitalWrite(led, LOW);
       delay(10);
       digitalWrite(led, LOW);
@@ -170,8 +170,8 @@ void loop() {
      TODO
      Check Graph for exploration mode
   */
-  if (mmRight >= 400) {
-    Serial.println("[ROTATE]Robot begin to rotate counterclockewise[/ROTATE]");
+  if (mmLeft >= 400) {
+    Serial.println("[ROTATE]Robot begin to rotate to the left[/ROTATE]");
     /*if we go at our left, and during the setup robot rotate counterclockerwise */
     if (currentAngle > 0) {
       currentAngle--;
@@ -180,8 +180,8 @@ void loop() {
     }
     turn();
   }
-  else if (mmLeft >= 400) {
-    Serial.println("[ROTATE]Robot begin to rotate clockewise[/ROTATE]");
+  else if (mmRight >= 400) {
+    Serial.println("[ROTATE]Robot begin to rotate to the right[/ROTATE]");
     /*if we go at our right, and during the setup robot rotate counterclockerwise */
     if (currentAngle < 3) {
       currentAngle++;
@@ -199,11 +199,6 @@ void loop() {
     }
     turn();
   }
-/*
-  mmLeft = 0;
-  mmCenter = 4000;
-  mmRight = 0;
-*/
 }
 
 /*
@@ -242,10 +237,12 @@ double readSensor(byte trigger, byte echo) {
 }
 
 /*Function permit to turn the robot to a certain angle*/
-void turn() {
+void turn(){
   while ((currentDegre <= (degres[currentAngle] - TOLERANCE)) || (currentDegre >= (degres[currentAngle] + TOLERANCE))) {
     Serial.print("\ncurrent degre : ");Serial.println(currentDegre);
     Serial.print("goal : ");Serial.println(degres[currentAngle]);
+    Serial.print("Min : ");Serial.println(degres[currentAngle] - TOLERANCE);
+    Serial.print("Max : ");Serial.println(degres[currentAngle] + TOLERANCE);
     currentDegre = Compass.GetHeadingDegrees();
     servoLeft.write(93);
     servoRight.write(93);
