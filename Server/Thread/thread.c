@@ -25,15 +25,15 @@ void *thread_Serial_Read(void *arg){
 			*queueRead = enqueue(*queueRead, message); //Add the message read int the reading queue
 			pthread_mutex_unlock(&(dataRead->mutexRead));
 
-			if(*(message+2) < 128){
+			/*if(*(message+2) < 128){
 				uint8_t* confirmation = getConfirmation(message);
 				#ifdef DEBUG
-					printMessage("Create confirmation == ", confirmation);
+					//printMessage("Create confirmation == ", confirmation);
 				#endif
 				pthread_mutex_lock(&(dataRead->mutexWrite));
 				*queueWrite = enqueue(*queueWrite, confirmation); //Add the message of confirmation in the writing queue
 				pthread_mutex_unlock(&(dataRead->mutexWrite));
-			}
+			}*/
 
 			message = (uint8_t*)malloc(MESSAGE_LENGHT);
 		}
@@ -61,7 +61,7 @@ void *thread_Exec(void *arg){
 		//execution of the request on the top of the queue
 		if(*queueRead != NULL && (*(getTop(*queueRead) + 2) < 128)){
 			#ifdef DEBUG
-				printMessage("Execution of -> ", getTop(*queueRead));
+				//printMessage("Execution of -> ", getTop(*queueRead));
 			#endif
 			pthread_mutex_lock(&(dataExec->mutexRead));
 			*queueRead = dequeue(*queueRead);
@@ -104,12 +104,12 @@ void *thread_Serial_Write(void *arg){
 			*queueWrite = dequeue(*queueWrite);
 			pthread_mutex_unlock(&(dataWrite->mutexWrite));
 
-			if(*(message+2) < 128){
+			/*if(*(message+2) < 128){
 				while(!isConfirmation(message,getTop(*queueRead)) && !*(dataWrite->close) && *queueRead != NULL);
 				pthread_mutex_lock(&(dataWrite->mutexRead));
 				*queueRead = dequeue(*queueRead);
 				pthread_mutex_unlock(&(dataWrite->mutexRead));
-			}
+			}*/
 		}
 	}
 

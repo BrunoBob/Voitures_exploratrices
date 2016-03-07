@@ -38,7 +38,7 @@ int open_s(serial_com* sc, char *name){
 
 	tcsetattr(sc->fd, TCSANOW, &toptions) ;
 
-	usleep(30000);
+	usleep(300000);
 
 	#ifdef DEBUG
 		printf("Serial port open\n") ;
@@ -61,20 +61,15 @@ int read_s(int fd, uint8_t *buffer){
 		printf("Erreur reading file");
 		return 0;
 	}
-	if(*car != '#'){
+	while(*car != '#'){
 		read(fd,car,1);
-		free(car);
-		return 0;
 	}
-	else{
-		int cpt=0;
-		while(*car != '!' && cpt < MESSAGE_LENGHT){
-			if(read(fd, car, 1) == 1){
-				*(buffer + cpt) = *car;
-				cpt++;
-			}
+	int cpt=0;
+	while(*car != '!' && cpt < MESSAGE_LENGHT){
+		if(read(fd, car, 1) == 1){
+			*(buffer + cpt) = *car;
+			cpt++;
 		}
-		//*(buffer + cpt -1) = ' ';
 	}
 	free(car);
 	return 1;
