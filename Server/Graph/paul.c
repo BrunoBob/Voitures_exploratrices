@@ -51,16 +51,20 @@ void addNode(Graph *graph, Information info){
 		graph->tab[info.currentNode][info.previousAngleTaken]->time = info.time;
 		//graph->tab[info.currentNode][info.previousAngleTaken]->somSucc = info.currentNode;
 	}else{
-		graph->visited[info.currentNode] = 1;
+		graph->visited[info.nextNode] = 1;
 		for(i=0;i<4;i++){
 			/*
 			 * For each new road discover, we look if we can add a node
 			 * we add him and put his time to 0
 			 */
-			if(info.angles[i] && graph->nbSom < MAXNODE){
+			if(info.angles[i]){
+				graph->tab[info.currentNode][previousAngleTaken]->time = info.time;
 				graph->tab[info.nextNode][i] = graph->nbSom;
 				graph->tab[][i]
 				graph->nbSom++;
+			}
+			else{
+				
 			}
 		}
 	}
