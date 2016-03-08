@@ -49,12 +49,17 @@ void addNode(Graph *graph, Information info){
 
 		/*update the road that robot went to take*/
 		graph->tab[info.currentNode][info.previousAngleTaken]->time = info.time;
-		graph->tab[info.currentNode][info.previousAngleTaken]->somSucc = info.currentNode;
+		//graph->tab[info.currentNode][info.previousAngleTaken]->somSucc = info.currentNode;
 	}else{
 		graph->visited[info.currentNode] = 1;
 		for(i=0;i<4;i++){
+			/*
+			 * For each new road discover, we look if we can add a node
+			 * we add him and put his time to 0
+			 */
 			if(info.angles[i] && graph->nbSom < MAXNODE){
-				graph->tab[info.currentNode][i] = graph->nbSom;
+				graph->tab[info.nextNode][i] = graph->nbSom;
+				graph->tab[][i]
 				graph->nbSom++;
 			}
 		}
