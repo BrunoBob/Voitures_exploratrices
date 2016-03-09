@@ -16,7 +16,7 @@ int main(int argc, char **argv){
 
 	Information info;
 	Graph graph;
-	int i, nextNode, goalNode = -2;
+	int i, goalNode = -2;
 	int list[MAXNODE];
 
 	createGraph(&graph);
@@ -36,7 +36,7 @@ int main(int argc, char **argv){
 			goalNode = nodeToGo(graph, info.nextNode);
 
 			/*Then we search road to go*/
-			list = roadToGo(graph, goalNode, info.nextNode, list);
+			roadToGo(graph, goalNode, info.nextNode, list);
 		}
 		serverInformationUpdate(graph, &info, list[i++]);
 
@@ -47,6 +47,7 @@ int main(int argc, char **argv){
 
 
 		graph = addNode(&graph, info);
+	}
 
 	printGraph(graph);
 
