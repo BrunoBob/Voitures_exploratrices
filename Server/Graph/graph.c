@@ -116,6 +116,7 @@ int serverInformationUpdate(Graph graph, Information *info, int nextNode){
 	for(i=0;i<4;i++){
 		if(graph.tab[info->currentNode][i].somSucc == nextNode){
 			info->previousAngleTaken = i;
+			i = 5;
 		}
 	}
 

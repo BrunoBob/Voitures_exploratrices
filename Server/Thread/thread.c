@@ -142,12 +142,13 @@ void *thread_main(void* arg){
 	configuration = request[3];
 	recognizeConfiguration(&info, configuration);
 	for(i=0;i<4;i++){
-		printf("Angle n°%d=%d", i, info.angles[i]);
+		printf("Angle n°%d=%d ; ", i, info.angles[i]);
 	}
 	pthread_mutex_lock(&(dataMain->mutexRead));
 	*queueRead = dequeue(*queueRead);
 	pthread_mutex_unlock(&(dataMain->mutexRead));
 
+	graph = addNode(&graph, info);
 
 	i=0;
 	while(goalNode != -1){
