@@ -5,6 +5,8 @@
 #include "../Queue/queue.h"
 #include "../Protocol/protocol.h"
 #include "../Serial/serial.h"
+#include "../Graph/graph.h"
+
 
 typedef struct {
 	Queue* queueRead;
@@ -20,5 +22,7 @@ void *thread_Serial_Read(void *arg);
 void *thread_Serial_Write(void *arg);
 
 void *thread_Exec(void *arg);
+
+void *thread_main(void* arg);
 
 #endif

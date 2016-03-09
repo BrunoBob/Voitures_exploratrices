@@ -1,4 +1,4 @@
-#include "graphTools.h"
+#include "graph.h"
 
 /*
  * If the robot takes :
@@ -47,7 +47,7 @@ Graph addNode(Graph *graph, Information info){
 	info = convertAngle(info);
 	/*Update the value for the road that we went to take*/
 	graph->tab[info.currentNode][info.previousAngleTaken].time = info.time;
-		
+
 	//The last angle taken become the angle that we arrive
 	info.previousAngleTaken = (info.previousAngleTaken+2)%4;
 
@@ -102,7 +102,7 @@ void printGraph(Graph graph){
 void printInformation(Information info){
 	printf("The car is in the node %d, will go to the node %d, by the angle %d\n",info.currentNode, info.nextNode, info.previousAngleTaken);
 }
-	
+
 /*
  * Function that calculate what is the angle that robot have to take
  * and return the number of the angle
@@ -138,7 +138,7 @@ int nodeToGo(Graph graph, int currentNode){
 	if(node != -1) return node;
 	node = searchUnexplore(graph, currentNode);
 	return node;
-	
+
 }
 
 int searchUnexplore(Graph graph, int node){
@@ -200,4 +200,3 @@ int* roadToGo(Graph graph, int node, int currentNode, int *list){
 	}
 	return list;
 }
-

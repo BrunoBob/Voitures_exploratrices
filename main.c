@@ -29,6 +29,7 @@ int main(int argc, char *argv[]){
 	pthread_t threadRead;
 	pthread_t threadExec;
 	pthread_t threadWrite;
+	pthread_t threadMain;
 
 	#ifdef DEBUG
 		printf("Création of reading thread\n" );
@@ -47,6 +48,13 @@ int main(int argc, char *argv[]){
 	#endif
 
 	pthread_create(&threadWrite, NULL, thread_Serial_Write, data);
+
+
+	#ifdef DEBUG
+		printf("Création of main thread\n" );
+	#endif
+
+	pthread_create(&threadMain, NULL, thread_main, data);
 
 	char* standardInput = (char*) malloc(4*sizeof(char));
 
@@ -89,6 +97,7 @@ int main(int argc, char *argv[]){
 	pthread_join(threadRead, NULL);
 	pthread_join(threadExec, NULL);
 	pthread_join(threadWrite, NULL);
+	pthread_join(threadMain, NULL);
 
 	close_s(&serial) ;
 
