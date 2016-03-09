@@ -152,14 +152,19 @@ void *thread_main(void* arg){
 
 	i=0;
 	while(goalNode != -1){
-		if(list[i] == -1){
-			/*First we search the next goal*/
+	/*	if(list[i] == -1){
+			//First we search the next goal
 			goalNode = nodeToGo(graph, info.nextNode);
 
-			/*Then we search road to go*/
+			//Then we search road to go
 			roadToGo(graph, goalNode, info.nextNode, list);
 		}
+	
 		serverInformationUpdate(graph, &info, list[i++]);
+	*/
+		puts("Vers quel noeud va le robot ? ");
+		scanf("%d",&goalNode);
+		serverInformationUpdate(graph, &info, goalNode);
 
 		/*Next we send datas ie:info.previousAngleTaken to the robot*/
 
