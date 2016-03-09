@@ -16,7 +16,8 @@ int main(int argc, char **argv){
 
 	Information info;
 	Graph graph;
-	int i;
+	int i, nextNode, goalNode = -2;
+	int list[MAXNODE];
 
 	createGraph(&graph);
 
@@ -26,8 +27,26 @@ int main(int argc, char **argv){
 	graph.tab[0][2].somSucc = 1;
 	graph.tab[0][2].time = -1;
 	graph.visited[0] = 1;
-	graph.visited[1] = 1;
 	graph.nbSom = 2;
+
+	i=0;
+	while(goalNode != -1){
+		if(list[i] == -1){
+			/*First we search the next goal*/
+			goalNode = nodeToGo(graph, info.nextNode);
+
+			/*Then we search road to go*/
+			list = roadToGo(graph, goalNode, info.nextNode, list);
+		}
+		serverInformationUpdate(graph, &info, list[i++]);
+
+		/*Next we send datas ie:info.previousAngleTaken to the robot*/
+
+
+		/*Then we wait new datas send by the robot and addNode to the graph*/
+
+
+		graph = addNode(&graph, info);
 
 	printGraph(graph);
 
