@@ -137,13 +137,16 @@ void *thread_main(void* arg){
 	info.nextNode = 1;
 	info.previousAngleTaken = 2;
 
-	while(queueRead == NULL){}
-	configuration = queueRead->request[4];
+	while(*queueRead == NULL){}
+	uint8_t *request = getTop(*queueRead);
+	configuration = request[3];
 	recognizeConfiguration(&info, configuration);
-
-	pthread_mutex_lock(&(dataRead->mutexRead));
+	for(i=0;i<4;i++){
+		printf("Angle n°%d=%d", i, info.angles[i]);
+	}
+	pthread_mutex_lock(&(dataMain->mutexRead));
 	*queueRead = dequeue(*queueRead);
-	pthread_mutex_unlock(&(dataRead->mutexRead));
+	pthread_mutex_unlock(&(dataMain->mutexRead));
 
 
 	i=0;
@@ -159,17 +162,18 @@ void *thread_main(void* arg){
 
 		/*Next we send datas ie:info.previousAngleTaken to the robot*/
 
-		printfInformation(info);
+		printInformation(info);
 
 		/*Then we wait new datas send by the robot and addNode to the graph*/
 
-		while(queueRead == NULL){}
-		configuration = queueRead->request[4];
+		while(*queueRead == NULL){}
+		request = getTop(*queueRead);
+		configuration = request[3];
 		recognizeConfiguration(&info, configuration);
 
-		pthread_mutex_lock(&(dataRead->mutexRead));
+		pthread_mutex_lock(&(dataMain->mutexRead));
 		*queueRead = dequeue(*queueRead);
-		pthread_mutex_unlock(&(dataRead->mutexRead));
+		pthread_mutex_unlock(&(dataMain->mutexRead));
 
 		graph = addNode(&graph, info);
 

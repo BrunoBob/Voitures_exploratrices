@@ -10,11 +10,14 @@ RH_ASK driverRF(2000, 9, 8, 10, false);
 RHReliableDatagram RF(driverRF, 0);
 
 byte* message;
-
+byte* Smessage;
 void setup() {
   RF.init();
   Serial.begin(9600); // Initialisation du port série pour avoir un retour sur le serial monitor
-  message = (byte*)malloc(4);
+  message = (byte*)malloc(2);
+  Smessage = (byte*)malloc(4);
+  *Smessage = 0 ;
+  *(Smessage + 1) = 1;
 }
 
 void loop() {
@@ -27,7 +30,7 @@ void loop() {
 }
 
 void readRF(){
-  uint8_t buflen = 4;
+  uint8_t buflen = 2;
   if(RF.recvfromAck(message, &buflen, NULL, NULL, NULL, NULL)){
       writeSerial();
   }
@@ -53,9 +56,12 @@ void readSerial(){
 }
 
 void writeSerial(){
+  *(Smessage+2) = *message;
+  *(Smessage+3) = *(message+1);
   Serial.write('#');
+  
   for(int i = 0 ; i < 4 ; i++){
-    Serial.write(*(message+i));
+    Serial.write(*(Smessage+i));
   }
   Serial.write('!');
 }

@@ -1,5 +1,5 @@
 NAME = $(target)
-OPT = -Wall -pthread
+OPT = -Wall -pthread -g
 DIR = /home/utilisateur/Bureau/Voitures_exploratrices/Bin
 WAY = $(path)
 CC = gcc
