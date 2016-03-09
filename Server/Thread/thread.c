@@ -153,14 +153,16 @@ void *thread_main(void* arg){
 	i=0;
 	while(goalNode != -1){
 	/*	if(list[i] == -1){
+			i = 0;
 			//First we search the next goal
 			goalNode = nodeToGo(graph, info.nextNode);
 
 			//Then we search road to go
-			roadToGo(graph, goalNode, info.nextNode, list);
+			list = roadToGo(graph, goalNode, info.nextNode, list);
 		}
 	
-		serverInformationUpdate(graph, &info, list[i++]);
+		serverInformationUpdate(graph, &info, list[i]);
+		i++;
 	*/
 		puts("Vers quel noeud va le robot ? ");
 		scanf("%d",&goalNode);
@@ -184,7 +186,7 @@ void *thread_main(void* arg){
 		graph = addNode(&graph, info);
 
 		printGraph(graph);
-	}
+	
 
 
 

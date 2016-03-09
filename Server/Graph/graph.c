@@ -116,24 +116,25 @@ int serverInformationUpdate(Graph graph, Information *info, int nextNode){
 	for(i=0;i<4;i++){
 		if(graph.tab[info->currentNode][i].somSucc == nextNode){
 			info->previousAngleTaken = i;
-			i = 5;
+		//	i = 5;
 		}
 	}
 
-	if(i == 4){
+	/*if(i == 4){
 		perror("Error, the nextNode doesn't exist near to the current");
 		exit(1);
-	}
+	}*/
 	return 0;
 }
 
 int nodeToGo(Graph graph, int currentNode){
 	int node;
 	int i;
-		node = -1;
+	node = -1;
 	for(i=0;i<4;i++){
 		if(graph.tab[currentNode][i].time == -1 && graph.tab[currentNode][i].somSucc != -1){
-			node = graph.tab[currentNode][i].somSucc;
+			if(node == -1)
+				node = graph.tab[currentNode][i].somSucc;
 		}
 	}
 	if(node != -1) return node;
@@ -159,14 +160,17 @@ int searchUnexplore(Graph graph, int node){
 			}
 		}
 	}
-	for(i=0;i<node;i++){
-		for(j=0;j<4;j++){
-			if(graph.tab[i][j].somSucc != -1 && graph.tab[i][j].time == -1){
-				nodeToGo = i;
-				j = 4;
-				i = node;
-				flag = 1;
+	if(!flag){
+		for(i=node-1;i<0;i--){
+			for(j=0;j<4;j++){
+				if(graph.tab[i][j].somSucc != -1 && graph.tab[i][j].time == -1){
+					if(!flag){
+						nodeToGo = graph[i][j].somSucc;
+						flag = 1;
+					}
+				}
 			}
+		
 		}
 	}
 	/*Si le flag n'a pas été mis a 1 alors tout le graphe est visité*/
@@ -177,7 +181,7 @@ int searchUnexplore(Graph graph, int node){
 
 int* roadToGo(Graph graph, int node, int currentNode, int *list){
 	int i;
-	int j;
+	int j = 0;
 
 	for(i=0;i<MAXNODE;i++){
 		list[i] = -1;
