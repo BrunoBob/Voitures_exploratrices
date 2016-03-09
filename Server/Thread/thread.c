@@ -121,6 +121,7 @@ void *thread_main(void* arg){
 	Graph graph;
 	int i, goalNode = -2;
 	int list[MAXNODE];
+	int configuration;
 
 	createGraph(&graph);
 
@@ -131,6 +132,19 @@ void *thread_main(void* arg){
 	graph.tab[0][2].time = -1;
 	graph.visited[0] = 1;
 	graph.nbSom = 2;
+
+	info.currentNode = 0;
+	info.nextNode = 1;
+	info.previousAngleTaken = 2;
+
+	while(queueRead == NULL){}
+	configuration = queueRead->request[4];
+	recognizeConfiguration(&info, configuration);
+
+	pthread_mutex_lock(&(dataRead->mutexRead));
+	*queueRead = dequeue(*queueRead);
+	pthread_mutex_unlock(&(dataRead->mutexRead));
+
 
 	i=0;
 	while(goalNode != -1){
@@ -145,14 +159,23 @@ void *thread_main(void* arg){
 
 		/*Next we send datas ie:info.previousAngleTaken to the robot*/
 
+		printfInformation(info);
 
 		/*Then we wait new datas send by the robot and addNode to the graph*/
 
+		while(queueRead == NULL){}
+		configuration = queueRead->request[4];
+		recognizeConfiguration(&info, configuration);
+
+		pthread_mutex_lock(&(dataRead->mutexRead));
+		*queueRead = dequeue(*queueRead);
+		pthread_mutex_unlock(&(dataRead->mutexRead));
 
 		graph = addNode(&graph, info);
+
+		printGraph(graph);
 	}
 
-	printGraph(graph);
 
 
 	#ifdef DEBUG

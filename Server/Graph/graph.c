@@ -200,3 +200,22 @@ int* roadToGo(Graph graph, int node, int currentNode, int *list){
 	}
 	return list;
 }
+
+void recognizeConfiguration(Information *info, int config){
+	info->angles[0] = 0;
+	info->angles[1] = 0;
+	info->angles[2] = 0;
+	info->angles[3] = 0;
+
+	if(config == 1 || config == 2 || config == 4 || config == 6){
+		info->angles[1]=1;
+	}
+
+	if(config == 1 || config == 2 || config == 3){
+		info->angles[2]=1;
+	}
+
+	if(config == 1 || config == 3 || config == 5 || config == 6){
+		info->angles[3]=1;
+	}
+}

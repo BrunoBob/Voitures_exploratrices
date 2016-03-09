@@ -64,5 +64,5 @@ int searchUnexplore(Graph graph, int node);
 
 int* roadToGo(Graph graph, int node, int currentNode, int* list);
 
-
+void recognizeConfiguration(*Information, int);
 #endif
