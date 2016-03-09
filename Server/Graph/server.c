@@ -29,6 +29,8 @@ int main(int argc, char **argv){
 	graph.visited[0] = 1;
 	graph.nbSom = 2;
 
+	for(i=0;i<MAXNODE;i++)
+		list[i] = -1;
 	i=0;
 	while(goalNode != -1){
 		if(list[i] == -1){
@@ -39,6 +41,11 @@ int main(int argc, char **argv){
 			roadToGo(graph, goalNode, info.nextNode, list);
 		}
 		serverInformationUpdate(graph, &info, list[i++]);
+		if(list[i] == -1){
+			for(i=0;i<MAXNODE;i++)
+				list[i] = -1;
+			i=0;
+		}
 
 		/*Next we send datas ie:info.previousAngleTaken to the robot*/
 
