@@ -3,8 +3,11 @@
    Auteur : Bruno TESSIER & Paul VALENTIN
 */
 #include <Servo.h>
-#include <Wire.h>
-#include <HMC5883L_Simple.h>
+#include <RH_ASK.h>
+#include <RHReliableDatagram.h>
+
+RH_ASK driverRF(2000, 9, 8, 10, false);
+RHReliableDatagram RF(driverRF, 1);
 
 /*Tolerance for Compass*/
 #define TOLERANCE 2
@@ -14,8 +17,6 @@
    is lessier than SPTOL, robot move off the wall
 */
 #define SPTOL 100
-
-HMC5883L_Simple Compass;
 
 /*Constant for US sensor*/
 const byte CENTER_T = 7 ;
@@ -34,22 +35,26 @@ const long MEASURE_TIMEOUT = 25000L;
 Servo servoRight;
 Servo servoLeft;
 
-/*
-   Contains value of each 90° angle
-   Permit to test if robot do an 90° rotation
 
-*/
-float degres[4];
-byte currentAngle = 0; //First angle is set to 0
-float currentDegre;
 
 const byte led = 10;
+
+float myTime;
+
+
+byte* message;
+
 
 /*
    When the led is HIGH, you can turn the robot manually to another angle
 */
 void setup() {
   Serial.begin(9600);
+
+  RF.init();
+  RF.setTimeout(300);
+  RF.setRetries(5);
+  message = (byte*)malloc(2);
 
   pinMode(CENTER_T, OUTPUT);
   pinMode(CENTER_E, INPUT);
@@ -63,27 +68,6 @@ void setup() {
   pinMode(led, OUTPUT);
   digitalWrite(led, LOW);
   delay(10);
-  Wire.begin();
-
-  Compass.SetDeclination(0, 14, 'E');
-  Compass.SetSamplingMode(COMPASS_SINGLE);
-  Compass.SetScale(COMPASS_SCALE_560);
-  Compass.SetOrientation(COMPASS_HORIZONTAL_Y_NORTH);
-
-  /*Setup for the 90 degres*/
-  degres[0] = Compass.GetHeadingDegrees();
-  Serial.print("Angle [0] = ");
-  Serial.println(degres[0]);
-  for (uint8_t i = 1; i <= 3; i++) {
-    digitalWrite(led, LOW);
-    delay(4000); //bad delay, better setup manually
-    degres[i] = Compass.GetHeadingDegrees();
-    digitalWrite(led, HIGH);
-    delay(100);
-    Serial.print("Angle ["); Serial.print(i); Serial.print("] = ");
-    Serial.println(degres[i]);
-    delay(1000);
-  }
  // Serial.println("Fin du setup");
   servoRight.attach(13);
   servoLeft.attach(12);
@@ -103,7 +87,7 @@ void loop() {
   double mmRight = 0;
   double mmFreeSpace;
   
-  currentDegre = 0;
+
   /*When he can go forward*/
   /*
      TODO
@@ -115,6 +99,7 @@ void loop() {
     digitalWrite(led, HIGH);
     delay(10);
   /*While he doesn't detect any intersection*/
+  myTime = millis();
   while ((mmCenter >= 50 || mmCenter == 0) && mmRight <= 400 && mmLeft <= 400) {
     /*if the robot can go faster*/
     if (rightSpeed < 110)
@@ -161,6 +146,7 @@ void loop() {
     Serial.print("Free Space = "); Serial.println(mmFreeSpace);
     Serial.println("[/MEASURE]\n");
   }
+  myTime = millis() - myTime ;
   digitalWrite(led, LOW);
   delay(10);
   Serial.println("[STOP] Robot stop to go forward [/STOP]");
@@ -173,71 +159,56 @@ void loop() {
   /*
    * Envoi des données, 0=arrière 1=droite, 2=devant, 3=gauche
    */
+   *message = 64;
   if(mmLeft >= 400 && mmRight >=400 &&mmCenter >= 400){
     /*
      * Nouveau noeud 4chemins 0 1 2 3
      */
+     *(message+1) = 1;
   }
   else if(mmLeft >= 400 && mmRight >=400 &&mmCenter <= 400){
+    
     /*
      * 0 1 2
      */
+     *(message+1) = 6;
   }
   else if(mmLeft <= 400 && mmRight >=400 &&mmCenter >= 400){
     /*
      * 0 2 3
      */
+     *(message+1) = 3;
   }
   else if(mmLeft >= 400 && mmRight <=400 &&mmCenter <= 400){
     /*
      * 0 1 
      */
+     *(message+1) = 4;
   }
-  else if(mmLeft <= 400 && mmRight <=400 &&mmCenter >= 400){
+  else if(mmLeft <= 400 && mmRight <=400 &&mmCenter <= 400){
     /*
-     * 0 3
+     * rien du tout 0000
      */
-  }
-  else if(mmLeft <= 400 && mmRight >=400 &&mmCenter <= 400){
-    /*
-     * 0 2
-     */
+     *(message+1) = 7;
   }
   else if(mmLeft >= 400 && mmRight <=400 &&mmCenter >= 400){
     /*
      * 0 1 3
      */
+     *(message+1) = 2;
   }
-  
-  if (mmLeft >= 400) {
-    Serial.println("[ROTATE]Robot begin to rotate to the left[/ROTATE]");
-    /*if we go at our left, and during the setup robot rotate counterclockerwise */
-    if (currentAngle > 0) {
-      currentAngle--;
-    } else {
-      currentAngle = 3;
-    }
-    turn();
+  else if(mmLeft <= 400 && mmRight >=400 &&mmCenter <= 400){
+    /*
+     * 0 1 3
+     */
+     *(message+1) = 5;
   }
-  else if (mmRight >= 400) {
-    Serial.println("[ROTATE]Robot begin to rotate to the right[/ROTATE]");
-    /*if we go at our right, and during the setup robot rotate counterclockerwise */
-    if (currentAngle < 3) {
-      currentAngle++;
-    } else {
-      currentAngle = 0;
-    }
-    turn();
-  }
-  else {
-    Serial.println("[ROTATE]Robot begin to turn back[/ROTATE]");
-    if (currentAngle < 2) {
-      currentAngle += 2;
-    } else {
-      currentAngle -= 2;
-    }
-    turn();
-  }
+  sendRF();
+  delay(3000);  
+}
+
+void sendRF(){
+  RF.sendtoWait(message, 2, 0);
 }
 
 /*
@@ -276,25 +247,3 @@ double readSensor(byte trigger, byte echo) {
 }
 
 /*Function permit to turn the robot to a certain angle*/
-void turn(){
-  while ((currentDegre <= (degres[currentAngle] - TOLERANCE)) || (currentDegre >= (degres[currentAngle] + TOLERANCE))) {
-    Serial.print("\ncurrent degre : ");Serial.println(currentDegre);
-    Serial.print("goal : ");Serial.println(degres[currentAngle]);
-    Serial.print("Min : ");Serial.println(degres[currentAngle] - TOLERANCE);
-    Serial.print("Max : ");Serial.println(degres[currentAngle] + TOLERANCE);
-    currentDegre = Compass.GetHeadingDegrees();
-    servoLeft.write(93);
-    servoRight.write(93);
-    delay(300);
-    servoLeft.write(95);
-    servoRight.write(95);
-    delay(100);
-  }
-
-  servoLeft.write(65);
-  servoRight.write(124);
-  delay(3000);
-  servoLeft.write(95);
-  servoRight.write(95);
-  delay(100);
-}
