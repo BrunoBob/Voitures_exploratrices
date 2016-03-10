@@ -101,6 +101,7 @@ void printGraph(Graph graph){
 
 void printInformation(Information info){
 	printf("The car is in the node %d, will go to the node %d, by the angle %d\n",info.currentNode, info.nextNode, info.previousAngleTaken);
+	printf("Angles n°1:%d n°2:%d n°3:%d", info.angles[1],info.angles[2], info.angles[3]);
 }
 
 /*

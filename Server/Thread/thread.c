@@ -164,13 +164,14 @@ void *thread_main(void* arg){
 		serverInformationUpdate(graph, &info, list[i]);
 		i++;
 	*/
-		puts("Vers quel noeud va le robot ? ");
+
+		printInformation(info);
+		puts("Vers quel noeud doit se diriger le robot ? ");
 		scanf("%d",&goalNode);
 		serverInformationUpdate(graph, &info, goalNode);
 
 		/*Next we send datas ie:info.previousAngleTaken to the robot*/
 
-		printInformation(info);
 
 		/*Then we wait new datas send by the robot and addNode to the graph*/
 
